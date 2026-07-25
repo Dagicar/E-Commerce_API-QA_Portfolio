@@ -1,0 +1,248 @@
+{
+  "info": {
+    "_postman_id": "133f2d64-5d6a-4b73-9254-df4ca8f526e2",
+    "name": "E-Commerce API - QA Portfolio",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "23508098",
+    "_collection_link": "https://go.postman.co/collection/23508098-133f2d64-5d6a-4b73-9254-df4ca8f526e2?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "POST - 01 Auth Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 201 Created y se guarda el Token\", function () {\r",
+              "    // 1. Convertir la respuesta a objeto JSON\r",
+              "    const respuesta = pm.response.json();\r",
+              "\r",
+              "    // 2. Validar Status 201 (Created)\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+              "\r",
+              "    // 3. Validar que el token sea un string\r",
+              "    pm.expect(respuesta.token).to.be.a('string');\r",
+              "\r",
+              "    // 4. Guardar el token en la variable de entorno\r",
+              "    pm.environment.set(\"token\", respuesta.token);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\": \"mor_2314\",\r\n    \"password\": \"83r5^_\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - 02 Consultar Productos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200 y lista de productos válida\", function () {\r",
+              "    // 1. Convertir la respuesta a objeto JSON\r",
+              "    const respuesta = pm.response.json();\r",
+              "\r",
+              "    // 2. Validar Status 200\r",
+              "    pm.response.to.have.status(200);\r",
+              "\r",
+              "    // 3. Validar que la respuesta sea un arreglo (Array)\r",
+              "    pm.expect(respuesta).to.be.an('array');\r",
+              "\r",
+              "    // 4. Validar que el arreglo tenga más de 0 elementos\r",
+              "    pm.expect(respuesta.length).to.be.above(0);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/products",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET - 03 Detalle de Producto",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200 y validar producto\", function () {\r",
+              "    // 1. Convertir la respuesta a objeto JSON\r",
+              "    const respuesta = pm.response.json();\r",
+              "\r",
+              "    // 2. Validar Status 200\r",
+              "    pm.response.to.have.status(200);\r",
+              "\r",
+              "    // 3. Validar que el ID sea igual a 1\r",
+              "    pm.expect(respuesta.id).to.eql(1); // 👈 Agregamos \"respuesta.\"\r",
+              "\r",
+              "    // 4. Validar que el precio sea un número\r",
+              "    pm.expect(respuesta.price).to.be.a('number'); // 👈 Agregamos \"respuesta.\"\r",
+              "\r",
+              "    // 5. Guardar variables de entorno para la siguiente petición\r",
+              "    pm.environment.set(\"productoId\", respuesta.id);\r",
+              "    pm.environment.set(\"productoPrecio\", respuesta.price);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/products/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "products",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - 04 Agregar al Carrito",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 200/201 y carrito creado con ID\", function () {\r",
+              "    const respuesta = pm.response.json();\r",
+              "\r",
+              "    // Validar status 200 o 201\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+              "\r",
+              "    // Validar que la propiedad ID exista\r",
+              "    pm.expect(respuesta.id).to.exist;\r",
+              "\r",
+              "    // Guardar el ID del carrito\r",
+              "    pm.environment.set(\"carritoId\", respuesta.id);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"userId\": 3,\r\n    \"date\": \"2026-07-24\",\r\n    \"products\": [\r\n        {\r\n            \"productId\": {{productoId}},\r\n            \"quantity\": 2\r\n        }\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/carts",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "carts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST - 05 Login Fallido (Unhappy Path)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status 400/401 y mensaje de credenciales incorrectas\", function () {\r",
+              "    // 1. Validar que el servidor responda con un código HTTP de error (400 o 401)\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);\r",
+              "\r",
+              "    // 2. Validar que el texto de la respuesta contenga el mensaje de error\r",
+              "    pm.expect(pm.response.text()).to.include(\"incorrect\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\": \"usuario_falso\",\r\n    \"password\": \"clave_incorrecta\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

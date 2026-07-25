@@ -1,0 +1,7 @@
+# Ignorar reportes HTML generados localmente
+reports/*.html
+
+# Ignorar logs y temporales de Node
+node_modules/
+npm-debug.log*
+.DS_Store
