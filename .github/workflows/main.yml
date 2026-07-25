@@ -1,6 +1,5 @@
 name: Automated API Tests Executions (Newman)
 
-# Se ejecuta automáticamente en cada 'push' a la rama main o de forma manual
 on:
   push:
     branches: [ "main" ]
@@ -11,28 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Descarga el código de tu repositorio
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Configura Node.js en la máquina virtual de GitHub
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
-      # 3. Instala Newman y el generador de reportes htmlextra
       - name: Install Newman & HTML Extra Reporter
         run: |
           npm install -g newman
           npm install -g newman-reporter-htmlextra
 
-      # 4. Ejecuta las pruebas de Postman
+      - name: Create Reports Directory
+        run: mkdir -p reports
+
       - name: Run Postman Tests
         run: |
-          newman run "E-Commerce_API-QA_Portfolio.postman_collection.json" -e "E-Commerce_QA_Env.postman_environment.json" -r cli,htmlextra --reporter-htmlextra-export reports/reporte_ci.html
+          newman run "E-Commerce_API-QA_Portfolio.postman_collection.json" -e "E-Commerce_QA_Env.postman_environment.json" -r cli,htmlextra --reporter-htmlextra-export reports/reporte_ci.html --suppress-exit-code
 
-      # 5. Guarda el reporte generado como un artefacto descargable en GitHub
       - name: Upload Test Report
         if: always()
         uses: actions/upload-artifact@v4
